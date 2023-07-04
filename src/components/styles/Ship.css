@@ -1,0 +1,18 @@
+/* src/components/Ship.css */
+
+.ship-item {
+	width: 80px;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #f0f0f0;
+	border: 1px solid #ccc;
+	cursor: pointer;
+	margin: 10px;
+	user-select: none;
+}
+
+.ship-item:hover {
+	background-color: #ddd;
+}

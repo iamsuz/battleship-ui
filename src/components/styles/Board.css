@@ -1,0 +1,54 @@
+/* src/components/Board.css */
+
+.board-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+
+.board {
+	display: grid;
+	grid-template-columns: repeat(10, 40px);
+	grid-template-rows: repeat(10, 40px);
+	gap: 2px;
+	width: 420px;
+	height: 420px;
+	border: 2px solid #333;
+}
+
+.cell {
+	width: 40px;
+	height: 40px;
+	background-color: #f0f0f0;
+	border: 1px solid #ccc;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+.cell:hover {
+	background-color: #ddd;
+}
+
+.ship-container {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+.ship-item {
+	width: 80px;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #f0f0f0;
+	border: 1px solid #ccc;
+	cursor: pointer;
+}
+
+.ship-item:hover {
+	background-color: #ddd;
+}

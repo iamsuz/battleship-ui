@@ -7,6 +7,7 @@ import Ship from "./Ship";
 type Ship = {
 	name: string;
 	size: number;
+	color: string;
 };
 
 type BoardCell = string | null;
@@ -20,13 +21,15 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 		createEmptyBoard(boardSize)
 	);
 	const [ships, setShips] = useState<Ship[]>([
-		{ name: "Carrier", size: 5 },
-		{ name: "Battleship", size: 4 },
-		{ name: "Cruiser", size: 3 },
-		{ name: "Submarine", size: 3 },
-		{ name: "Destroyer", size: 2 },
+		{ name: "Carrier", size: 5, color: "#FF6347" }, // red
+		{ name: "Battleship", size: 4, color: "#4682B4" }, // blue
+		{ name: "Cruiser", size: 3, color: "#3CB371" }, // green
+		{ name: "Submarine", size: 3, color: "#8A2BE2" }, // purple
+		{ name: "Destroyer", size: 2, color: "#FFD700" }, // yellow
 	]);
 
+	//Track placed ships
+	const [placedShips, setPlacedShips] = useState<string[]>([]);
 	const [dragginShip, setDraggingShip] = useState<Ship | null>(null);
 
 	// Create an empty board
@@ -40,8 +43,14 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 	}
 
 	// Handle the start og the drag event
-	const handleDragStart = (e: React.DragEvent, name: string, size: number) => {
-		setDraggingShip({ name, size });
+	const handleDragStart = (
+		e: React.DragEvent,
+		name: string,
+		size: number,
+		color: string
+	) => {
+		if (placedShips.includes(name)) return; //This will prevent palacing same ship twice
+		setDraggingShip({ name, size, color });
 	};
 
 	//Handke dropping a ship on the board
@@ -49,24 +58,64 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 		e.preventDefault();
 		if (dragginShip) {
 			placeShipOnBoard(dragginShip, row, col);
+			setDraggingShip(null);
 		}
 	};
 
 	//Allow dropping by preventing default behavaiour
-	const handleDragover = (e: React.DragEvent) => {
+	const handleDragOver = (e: React.DragEvent) => {
 		e.preventDefault();
 	};
 
 	const placeShipOnBoard = (ship: Ship, row: number, col: number) => {
+		if (col + ship.size > boardSize) return; //check if the placement is valid
+
 		const newBoard = [...board];
 
-		//check if the placement is valid
-		if (col + ship.size <= boardSize) {
-			for (let i = 0; i < ship.size; i++) {
-				newBoard[row][col + i] = ship.name;
+		//Check if there is enough space to place the ship on
+		for (let i = 0; i < ship.size; i++) {
+			if (newBoard[row][col + i] !== null) {
+				return; //Block placement if the any cell is occupied
 			}
-			setBoard(newBoard);
+			newBoard[row][col + i] = ship.color;
 		}
+
+		setBoard(newBoard);
+		setPlacedShips((prev) => [...prev, ship.name]);
+		//check if the placement is valid
+		// if (col + ship.size <= boardSize) {
+		// 	for (let i = 0; i < ship.size; i++) {
+		// 		newBoard[row][col + i] = ship.name;
+		// 	}
+		// 	setBoard(newBoard);
+		// }
+	};
+
+	//Render board cells with ship color and ship anme on hover
+
+	const renderCell = (rowIndex: number, colIndex: number, cell: BoardCell) => {
+		const shipColor = cell;
+		return (
+			<div
+				key={`${rowIndex}-${colIndex}`}
+				className="cell"
+				onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
+				onDragOver={handleDragOver}
+				style={{ backgroundColor: shipColor }}
+			>
+				{shipColor ? (
+					<span
+						className="ship-name"
+						title={getShipNameByColor(shipColor)}
+					></span>
+				) : null}
+			</div>
+		);
+	};
+
+	const getShipNameByColor = (color: string) => {
+		const ship = ships.find((ship) => ship.color === color);
+		return ship ? ship.name : "";
 	};
 
 	return (
@@ -74,16 +123,7 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 			{/* Board Grid */}
 			<div className="board">
 				{board.map((row, rowIndex) =>
-					row.map((cell, colIndex) => (
-						<div
-							key={`${rowIndex}-${colIndex}`}
-							className="cell"
-							onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
-							onDragOver={handleDragover}
-						>
-							{cell ? <span className="ship">{cell}</span> : null}
-						</div>
-					))
+					row.map((cell, colIndex) => renderCell(rowIndex, colIndex, cell))
 				)}
 			</div>
 
@@ -94,7 +134,9 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 						key={ship.name}
 						name={ship.name}
 						size={ship.size}
+						color={ship.color}
 						onDragStart={handleDragStart}
+						isDraggable={!placedShips.includes(ship.name)} // Disable dragging for placed ships
 					/>
 				))}
 			</div>

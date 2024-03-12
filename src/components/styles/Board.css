@@ -52,3 +52,18 @@
 .ship-item:hover {
 	background-color: #ddd;
 }
+
+.ship-name {
+	display: none; /* Hide ship names by default */
+}
+
+/* Show ship name when hovering over the cell */
+.cell:hover .ship-name {
+	display: block;
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.7);
+	color: #fff;
+	padding: 3px 5px;
+	border-radius: 3px;
+	font-size: 12px;
+}

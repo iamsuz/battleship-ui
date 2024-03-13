@@ -77,6 +77,10 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 			if (newBoard[row][col + i] !== null) {
 				return; //Block placement if the any cell is occupied
 			}
+		}
+
+		//Place the ship if no cells are occupied
+		for (let i = 0; i < ship.size; i++) {
 			newBoard[row][col + i] = ship.color;
 		}
 

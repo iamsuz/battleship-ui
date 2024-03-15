@@ -7,11 +7,13 @@ interface ShipProps {
 	name: string;
 	size: number;
 	color: string;
+	direction: "horizontal" | "vertical";
 	onDragStart: (
 		e: React.DragEvent,
 		name: string,
 		size: number,
-		color: string
+		color: string,
+		direction: "horizontal" | "vertical"
 	) => void;
 	isDraggable: boolean;
 }
@@ -20,6 +22,7 @@ const Ship: React.FC<ShipProps> = ({
 	name,
 	size,
 	color,
+	direction,
 	onDragStart,
 	isDraggable,
 }) => {
@@ -27,7 +30,7 @@ const Ship: React.FC<ShipProps> = ({
 		<div
 			className="ship-item"
 			draggable={isDraggable}
-			onDragStart={(e) => onDragStart(e, name, size, color)}
+			onDragStart={(e) => onDragStart(e, name, size, color, direction)}
 			style={{ backgroundColor: color }}
 			title={`Drag to place ${name}`}
 		>

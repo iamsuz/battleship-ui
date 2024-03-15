@@ -1,16 +1,15 @@
-// src/components/Board.tsx
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../styles/Board.css";
 import Ship from "./Ship";
 
 type Ship = {
 	name: string;
 	size: number;
-	color: string;
+	color: string; // Store the ship color
+	direction: "horizontal" | "vertical"; // Track ship direction
 };
 
-type BoardCell = string | null;
+type BoardCell = string | null; // Now storing color instead of ship names
 
 interface BoardProps {
 	boardSize?: number;
@@ -21,82 +20,100 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 		createEmptyBoard(boardSize)
 	);
 	const [ships, setShips] = useState<Ship[]>([
-		{ name: "Carrier", size: 5, color: "#FF6347" }, // red
-		{ name: "Battleship", size: 4, color: "#4682B4" }, // blue
-		{ name: "Cruiser", size: 3, color: "#3CB371" }, // green
-		{ name: "Submarine", size: 3, color: "#8A2BE2" }, // purple
-		{ name: "Destroyer", size: 2, color: "#FFD700" }, // yellow
+		{ name: "Carrier", size: 5, color: "#FF6347", direction: "horizontal" }, // red
+		{ name: "Battleship", size: 4, color: "#4682B4", direction: "horizontal" }, // blue
+		{ name: "Cruiser", size: 3, color: "#3CB371", direction: "horizontal" }, // green
+		{ name: "Submarine", size: 3, color: "#8A2BE2", direction: "horizontal" }, // purple
+		{ name: "Destroyer", size: 2, color: "#FFD700", direction: "horizontal" }, // yellow
 	]);
-
-	//Track placed ships
-	const [placedShips, setPlacedShips] = useState<string[]>([]);
-	const [dragginShip, setDraggingShip] = useState<Ship | null>(null);
+	const [placedShips, setPlacedShips] = useState<string[]>([]); // Track placed ships
+	const [draggingShip, setDraggingShip] = useState<Ship | null>(null);
 
 	// Create an empty board
 	function createEmptyBoard(size: number): BoardCell[][] {
 		const board: BoardCell[][] = [];
 		for (let i = 0; i < size; i++) {
-			const row: BoardCell[] = Array(size).fill(null);
+			const row: BoardCell[] = Array(size).fill(null); // Initialize empty cells
 			board.push(row);
 		}
 		return board;
 	}
 
-	// Handle the start og the drag event
-	const handleDragStart = (
-		e: React.DragEvent,
-		name: string,
-		size: number,
-		color: string
-	) => {
-		if (placedShips.includes(name)) return; //This will prevent palacing same ship twice
-		setDraggingShip({ name, size, color });
+	// Handle the start of a drag event
+	const handleDragStart = (e: React.DragEvent, ship: Ship) => {
+		if (placedShips.includes(ship.name)) return; // Prevent dragging if already placed
+		setDraggingShip(ship);
 	};
 
-	//Handke dropping a ship on the board
+	// Handle dropping a ship on the board
 	const handleDrop = (e: React.DragEvent, row: number, col: number) => {
 		e.preventDefault();
-		if (dragginShip) {
-			placeShipOnBoard(dragginShip, row, col);
-			setDraggingShip(null);
+		if (draggingShip) {
+			placeShipOnBoard(draggingShip, row, col);
+			setDraggingShip(null); // Reset the dragging ship after drop
 		}
 	};
 
-	//Allow dropping by preventing default behavaiour
+	// Allow dropping by preventing default behavior
 	const handleDragOver = (e: React.DragEvent) => {
 		e.preventDefault();
 	};
 
+	// Place the ship on the board (check all cells to prevent overlap)
 	const placeShipOnBoard = (ship: Ship, row: number, col: number) => {
-		if (col + ship.size > boardSize) return; //check if the placement is valid
-
 		const newBoard = [...board];
 
-		//Check if there is enough space to place the ship on
+		// Check if there's enough space to place the ship (checking for overlap)
+		if (!checkSpaceForShip(ship, row, col)) {
+			return; // Don't place the ship if there isn't enough space
+		}
+
+		// Place the ship if the space is clear
 		for (let i = 0; i < ship.size; i++) {
-			if (newBoard[row][col + i] !== null) {
-				return; //Block placement if the any cell is occupied
+			if (ship.direction === "horizontal") {
+				newBoard[row][col + i] = ship.color;
+			} else {
+				newBoard[row + i][col] = ship.color;
 			}
 		}
 
-		//Place the ship if no cells are occupied
-		for (let i = 0; i < ship.size; i++) {
-			newBoard[row][col + i] = ship.color;
-		}
-
+		// Update the board and mark the ship as placed
 		setBoard(newBoard);
 		setPlacedShips((prev) => [...prev, ship.name]);
-		//check if the placement is valid
-		// if (col + ship.size <= boardSize) {
-		// 	for (let i = 0; i < ship.size; i++) {
-		// 		newBoard[row][col + i] = ship.name;
-		// 	}
-		// 	setBoard(newBoard);
-		// }
 	};
 
-	//Render board cells with ship color and ship anme on hover
+	// Check if the ship can be placed on the board (based on direction and space)
+	const checkSpaceForShip = (ship: Ship, row: number, col: number): boolean => {
+		if (ship.direction === "horizontal") {
+			if (col + ship.size > boardSize) return false; // Out of bounds check
+			for (let i = 0; i < ship.size; i++) {
+				if (board[row][col + i] !== null) return false; // Check if the cell is occupied
+			}
+		} else {
+			// vertical
+			if (row + ship.size > boardSize) return false; // Out of bounds check
+			for (let i = 0; i < ship.size; i++) {
+				if (board[row + i][col] !== null) return false; // Check if the cell is occupied
+			}
+		}
+		return true; // Space is clear
+	};
 
+	// Toggle the direction of the ship (horizontal/vertical)
+
+	const toggleShipDirection = (ship: Ship) => {
+		const updatedShip: Ship = {
+			...ship,
+			direction: ship.direction === "horizontal" ? "vertical" : "horizontal", // Toggle between horizontal and vertical
+		};
+
+		// Update the state correctly
+		setShips((prevShips) =>
+			prevShips.map((s) => (s.name === ship.name ? updatedShip : s))
+		);
+	};
+
+	// Render board cells with ship color and ship name on hover
 	const renderCell = (rowIndex: number, colIndex: number, cell: BoardCell) => {
 		const shipColor = cell;
 		return (
@@ -105,18 +122,18 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 				className="cell"
 				onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
 				onDragOver={handleDragOver}
-				style={{ backgroundColor: shipColor }}
+				style={{ backgroundColor: shipColor || "#f0f0f0" }} // Use color or default gray
 			>
 				{shipColor ? (
-					<span
-						className="ship-name"
-						title={getShipNameByColor(shipColor)}
-					></span>
+					<span className="ship-name" title={getShipNameByColor(shipColor)}>
+						{/* Show ship name on hover */}
+					</span>
 				) : null}
 			</div>
 		);
 	};
 
+	// Get the ship name from its color
 	const getShipNameByColor = (color: string) => {
 		const ship = ships.find((ship) => ship.color === color);
 		return ship ? ship.name : "";
@@ -134,14 +151,23 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 			{/* Ships Panel */}
 			<div className="ship-container">
 				{ships.map((ship) => (
-					<Ship
+					<div
 						key={ship.name}
-						name={ship.name}
-						size={ship.size}
-						color={ship.color}
-						onDragStart={handleDragStart}
-						isDraggable={!placedShips.includes(ship.name)} // Disable dragging for placed ships
-					/>
+						className="ship-item"
+						style={{ backgroundColor: ship.color }}
+					>
+						<Ship
+							name={ship.name}
+							size={ship.size}
+							color={ship.color}
+							direction={ship.direction}
+							onDragStart={(e) => handleDragStart(e, ship)}
+							isDraggable={!placedShips.includes(ship.name)} // Disable dragging for placed ships
+						/>
+						<button onClick={() => toggleShipDirection(ship)}>
+							Toggle Direction
+						</button>
+					</div>
 				))}
 			</div>
 		</div>

@@ -1,5 +1,3 @@
-// src/components/Ship.tsx
-
 import React from "react";
 import "../styles/Ship.css";
 
@@ -16,6 +14,7 @@ interface ShipProps {
 		direction: "horizontal" | "vertical"
 	) => void;
 	isDraggable: boolean;
+	onToggleDirection: () => void; // Allow each ship to toggle its direction
 }
 
 const Ship: React.FC<ShipProps> = ({
@@ -25,16 +24,36 @@ const Ship: React.FC<ShipProps> = ({
 	direction,
 	onDragStart,
 	isDraggable,
+	onToggleDirection,
 }) => {
 	return (
-		<div
-			className="ship-item"
-			draggable={isDraggable}
-			onDragStart={(e) => onDragStart(e, name, size, color, direction)}
-			style={{ backgroundColor: color }}
-			title={`Drag to place ${name}`}
-		>
-			{name} ({size} cells)
+		<div className="ship-item">
+			<div
+				className="ship-header"
+				style={{ backgroundColor: color }}
+				title={`Drag to place ${name}`}
+			>
+				<strong>{name}</strong> ({size} cells)
+			</div>
+			{/* Render the Ship Grid */}
+			<div
+				className="ship-grid"
+				style={{
+					display: "flex",
+					flexDirection: direction === "horizontal" ? "row" : "column",
+				}}
+			>
+				{new Array(size).fill(null).map((_, index) => (
+					<div
+						key={index}
+						className="grid-cell"
+						style={{ backgroundColor: color }}
+					/>
+				))}
+			</div>
+			<button onClick={onToggleDirection} className="toggle-direction-btn">
+				Toggle Direction
+			</button>
 		</div>
 	);
 };

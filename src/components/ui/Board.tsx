@@ -40,9 +40,17 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 	}
 
 	// Handle the start of a drag event
-	const handleDragStart = (e: React.DragEvent, ship: Ship) => {
-		if (placedShips.includes(ship.name)) return; // Prevent dragging if already placed
-		setDraggingShip(ship);
+	const handleDragStart = (
+		e: React.DragEvent,
+		name: string,
+		size: number,
+		color: string,
+		direction: "horizontal" | "vertical"
+	) => {
+		e.dataTransfer.setData(
+			"ship",
+			JSON.stringify({ name, size, color, direction })
+		);
 	};
 
 	// Handle dropping a ship on the board
@@ -138,7 +146,19 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 		const ship = ships.find((ship) => ship.color === color);
 		return ship ? ship.name : "";
 	};
-
+	// Handle toggling ship direction
+	const handleToggleDirection = (name: string) => {
+		const updatedShips: Ship = ships.map((ship) =>
+			ship.name === name
+				? {
+						...ship,
+						direction:
+							ship.direction === "horizontal" ? "vertical" : "horizontal",
+				  }
+				: ship
+		);
+		setShips(updatedShips);
+	};
 	return (
 		<div className="board-container">
 			{/* Board Grid */}
@@ -162,6 +182,7 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 							color={ship.color}
 							direction={ship.direction}
 							onDragStart={(e) => handleDragStart(e, ship)}
+							onToggleDirection={() => handleToggleDirection(ship.name)} // Toggle direction on each ship
 							isDraggable={!placedShips.includes(ship.name)} // Disable dragging for placed ships
 						/>
 						<button onClick={() => toggleShipDirection(ship)}>

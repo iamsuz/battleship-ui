@@ -40,17 +40,9 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 	}
 
 	// Handle the start of a drag event
-	const handleDragStart = (
-		e: React.DragEvent,
-		name: string,
-		size: number,
-		color: string,
-		direction: "horizontal" | "vertical"
-	) => {
-		e.dataTransfer.setData(
-			"ship",
-			JSON.stringify({ name, size, color, direction })
-		);
+	const handleDragStart = (e: React.DragEvent, ship: Ship) => {
+		setDraggingShip(ship); // Set the dragging ship
+		e.dataTransfer.setData("ship", JSON.stringify(ship));
 	};
 
 	// Handle dropping a ship on the board
@@ -75,7 +67,7 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 		if (!checkSpaceForShip(ship, row, col)) {
 			return; // Don't place the ship if there isn't enough space
 		}
-
+		console.log("Placing ship on board");
 		// Place the ship if the space is clear
 		for (let i = 0; i < ship.size; i++) {
 			if (ship.direction === "horizontal") {
@@ -148,7 +140,7 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 	};
 	// Handle toggling ship direction
 	const handleToggleDirection = (name: string) => {
-		const updatedShips: Ship = ships.map((ship) =>
+		const updatedShips: Ship[] = ships.map((ship) =>
 			ship.name === name
 				? {
 						...ship,
@@ -171,24 +163,16 @@ const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
 			{/* Ships Panel */}
 			<div className="ship-container">
 				{ships.map((ship) => (
-					<div
+					<Ship
 						key={ship.name}
-						className="ship-item"
-						style={{ backgroundColor: ship.color }}
-					>
-						<Ship
-							name={ship.name}
-							size={ship.size}
-							color={ship.color}
-							direction={ship.direction}
-							onDragStart={(e) => handleDragStart(e, ship)}
-							onToggleDirection={() => handleToggleDirection(ship.name)} // Toggle direction on each ship
-							isDraggable={!placedShips.includes(ship.name)} // Disable dragging for placed ships
-						/>
-						<button onClick={() => toggleShipDirection(ship)}>
-							Toggle Direction
-						</button>
-					</div>
+						name={ship.name}
+						size={ship.size}
+						color={ship.color}
+						direction={ship.direction}
+						onDragStart={(e) => handleDragStart(e, ship)}
+						onToggleDirection={() => handleToggleDirection(ship.name)}
+						isDraggable={!placedShips.includes(ship.name)}
+					/>
 				))}
 			</div>
 		</div>

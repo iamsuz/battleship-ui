@@ -12,10 +12,11 @@ type Ship = {
 type BoardCell = string | null; // Now storing color instead of ship names
 
 interface BoardProps {
-	boardSize?: number;
+	boardSize: number;
+	isAttackBoard: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ boardSize = 10 }) => {
+const Board: React.FC<BoardProps> = ({ boardSize }) => {
 	const [board, setBoard] = useState<BoardCell[][]>(
 		createEmptyBoard(boardSize)
 	);

@@ -1,8 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { AuthProvider } from "./AuthContext"; // Import AuthProvider
+import PrivateRoute from "./PrivateRoute"; // Import PrivateRoute
 import "./App.css";
 import AttackBoard from "./components/ui/AttackBoard";
 import Board from "./components/ui/Board";
+import UserForm from "./components/ui/UserForm";
 
 // Create a new History page (game history)
 const History: React.FC = () => {
@@ -26,6 +29,9 @@ const LandingPage: React.FC = () => {
 			<p className="game-description">
 				Get ready to play the classic Battleship game!
 			</p>
+			<div>
+				<UserForm />
+			</div>
 			<div className="navigation-links">
 				<Link to="/game" className="nav-link">
 					Start Game
@@ -66,13 +72,22 @@ const GamePage: React.FC = () => {
 
 const App: React.FC = () => {
 	return (
-		<Router>
-			<Routes>
-				<Route path="/" element={<LandingPage />} /> {/* Landing Page */}
-				<Route path="/game" element={<GamePage />} /> {/* Game Page */}
-				<Route path="/dashboard" element={<History />} /> {/* Game History */}
-			</Routes>
-		</Router>
+		<AuthProvider>
+			<Router>
+				<Routes>
+					<Route path="/" element={<UserForm />} /> {/* UserForm route */}
+					{/* Protected Routes */}
+					<Route
+						path="/game"
+						element={<PrivateRoute element={<GamePage />} path="/game" />}
+					/>
+					<Route
+						path="/dashboard"
+						element={<PrivateRoute element={<History />} path="/dashboard" />}
+					/>
+				</Routes>
+			</Router>
+		</AuthProvider>
 	);
 };
 

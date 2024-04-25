@@ -1,0 +1,71 @@
+/* UserForm styling */
+
+.user-form-container {
+	max-width: 400px;
+	margin: 50px auto;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+	font-size: 1.8rem;
+	margin-bottom: 20px;
+	text-align: center;
+	color: #333;
+}
+
+.user-form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.form-label {
+	font-size: 1rem;
+	margin-bottom: 5px;
+	color: #333;
+}
+
+.form-input {
+	padding: 10px;
+	font-size: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	outline: none;
+	transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+	border-color: #007bff;
+}
+
+.form-actions {
+	text-align: center;
+}
+
+.submit-btn {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 12px 20px;
+	font-size: 1.2rem;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+	background-color: #0056b3;
+}
+
+.submit-btn:disabled {
+	background-color: #ccc;
+	cursor: not-allowed;
+}

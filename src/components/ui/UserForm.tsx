@@ -15,7 +15,7 @@ const UserForm: React.FC = () => {
 	const [error, setError] = useState<string | null>(null); // State to hold error messages
 	const [isLoading, setIsLoading] = useState(false); // To track loading state
 
-	// If the user is authenticated, redirect to /game
+	// If the user is authenticated, redirect to
 	useEffect(() => {
 		if (isAuthenticated) {
 			navigate("/game");

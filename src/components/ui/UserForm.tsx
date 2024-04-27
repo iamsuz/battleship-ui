@@ -57,7 +57,6 @@ const UserForm: React.FC = () => {
 				// Redirect to the game page (or any authenticated route)
 				navigate("/game");
 			} else {
-				// Handle API failure (e.g., show error message)
 				setError(data.message || "Failed to authenticate. Please try again.");
 			}
 		} catch (err) {

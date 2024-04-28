@@ -22,6 +22,9 @@ const History: React.FC = () => {
 	);
 };
 
+/**
+ * We will implement this
+ */
 const LandingPage: React.FC = () => {
 	return (
 		<div className="landing-container">

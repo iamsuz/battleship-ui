@@ -8,6 +8,10 @@ import Board from "./components/ui/Board";
 import UserForm from "./components/ui/UserForm";
 
 // Create a new History page (game history)
+/**
+ * History for the user regarding previous played games
+ * @returns
+ */
 const History: React.FC = () => {
 	return (
 		<div className="history-container">

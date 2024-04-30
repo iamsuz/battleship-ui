@@ -29,28 +29,28 @@ const History: React.FC = () => {
 /**
  * We will implement this
  */
-const LandingPage: React.FC = () => {
-	return (
-		<div className="landing-container">
-			<h1 className="game-title">Welcome to Battleship</h1>
-			<p className="game-description">
-				Get ready to play the classic Battleship game!
-			</p>
-			<div>
-				<UserForm />
-			</div>
-			<div className="navigation-links">
-				<Link to="/game" className="nav-link">
-					Start Game
-				</Link>
-				<br />
-				<Link to="/dashboard" className="nav-link">
-					View Game History
-				</Link>
-			</div>
-		</div>
-	);
-};
+// const LandingPage: React.FC = () => {
+// 	return (
+// 		<div className="landing-container">
+// 			<h1 className="game-title">Welcome to Battleship</h1>
+// 			<p className="game-description">
+// 				Get ready to play the classic Battleship game!
+// 			</p>
+// 			<div>
+// 				<UserForm />
+// 			</div>
+// 			<div className="navigation-links">
+// 				<Link to="/game" className="nav-link">
+// 					Start Game
+// 				</Link>
+// 				<br />
+// 				<Link to="/dashboard" className="nav-link">
+// 					View Game History
+// 				</Link>
+// 			</div>
+// 		</div>
+// 	);
+// };
 
 const GamePage: React.FC = () => {
 	return (

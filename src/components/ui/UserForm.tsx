@@ -9,7 +9,7 @@ const UserForm: React.FC = () => {
 	const [formData, setFormData] = useState({
 		username: "",
 		email: "",
-		isGuest: false,
+		isGuest: true,
 	});
 
 	const [error, setError] = useState<string | null>(null); // State to hold error messages
@@ -46,16 +46,17 @@ const UserForm: React.FC = () => {
 					email: formData.email,
 					isGuest: formData.isGuest,
 				}),
+				credentials: "include",
 			});
 
 			const data = await response.json();
 
 			if (response.ok && data.success) {
 				// Authenticate user in the context
-				authenticate(formData.username, formData.email);
+				authenticate(formData.username, data.user.email);
 
 				// Redirect to the game page (or any authenticated route)
-				navigate("/game");
+				navigate("/dashboard");
 			} else {
 				setError(data.message || "Failed to authenticate. Please try again.");
 			}
@@ -89,7 +90,7 @@ const UserForm: React.FC = () => {
 
 				<div className="form-group">
 					<label htmlFor="email" className="form-label">
-						Email (required)
+						Email
 					</label>
 					<input
 						type="email"
@@ -97,7 +98,6 @@ const UserForm: React.FC = () => {
 						name="email"
 						value={formData.email}
 						onChange={handleChange}
-						required
 						className="form-input"
 					/>
 				</div>

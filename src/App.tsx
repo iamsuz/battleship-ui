@@ -6,6 +6,7 @@ import "./App.css";
 import AttackBoard from "./components/ui/AttackBoard";
 import Board from "./components/ui/Board";
 import UserForm from "./components/ui/UserForm";
+import { useNavigate } from "react-router-dom";
 
 // Create a new History page (game history)
 /**
@@ -13,12 +14,48 @@ import UserForm from "./components/ui/UserForm";
  * @returns
  */
 const History: React.FC = () => {
+	const navigate = useNavigate(); // For navigation after authentication
+
+	const handleStartGame = async () => {
+		// Start a new game
+
+		//Create a new session
+		try {
+			const response = await fetch(
+				"http://localhost:3030/sessions/create-session",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include",
+				}
+			);
+
+			const data = await response.json();
+			if (data.success) {
+				console.log(response);
+				navigate("/game");
+			} else {
+				navigate("/game");
+			}
+		} catch (error) {
+			console.error("Error starting a new game", error);
+		}
+		//And show waiting page until the next player joins
+		//Or start the game if the player is the second one
+
+		//Navigate to the game page
+	};
 	return (
 		<div className="history-container">
 			<h1 className="history-title">Game History</h1>
 			<p className="history-description">
 				This is where the history of the games will be displayed.
 			</p>
+			<button className="history-button" onClick={handleStartGame}>
+				<Link to="/game"> Start New Game</Link>{" "}
+			</button>
 			<Link to="/" className="back-link">
 				Go back to the game
 			</Link>
